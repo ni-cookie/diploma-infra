@@ -1,0 +1,15 @@
+# --- Terraform ---
+.terraform/
+
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+
+# --- GitOps / Kubernetes ---
+kubeconfig
+*.pem
+*.key
+
+# --- System ---
+.DS_Store

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-script
+data:
+  init.sh: |
+    #!/bin/bash
+    set -e
+    # Подключаемся к БД и выполняем SQL, подставляя переменную $FASTAPI_DB_PASSWORD
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+      CREATE DATABASE realworld_db;
+      CREATE ROLE fastapi_user WITH LOGIN PASSWORD '$FASTAPI_DB_PASSWORD';
+      GRANT ALL PRIVILEGES ON DATABASE realworld_db TO fastapi_user;
+      \c realworld_db
+      GRANT ALL ON SCHEMA public TO fastapi_user;
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO fastapi_user;
+    EOSQL

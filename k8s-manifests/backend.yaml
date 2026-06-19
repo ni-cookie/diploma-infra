@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: run-migrations
+          image: ghcr.io/ni-cookie/diploma-backend:latest
+          command: ["alembic", "upgrade", "head"]
+          env:
+            - name: POSTGRES_SERVER
+              value: "postgres-svc"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: admin-password
+            - name: POSTGRES_DB
+              value: "realworld_db"
+      containers:
+        - name: backend
+          image: ghcr.io/ni-cookie/diploma-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: POSTGRES_SERVER
+              value: "postgres-svc"
+            - name: POSTGRES_USER
+              value: "fastapi_user"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: fastapi-password
+            - name: POSTGRES_DB
+              value: "realworld_db"
+            - name: SECRET_KEY
+              value: "diploma-super-secret-key-123"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8000
+      targetPort: 8000

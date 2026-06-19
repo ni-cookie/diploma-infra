@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: realworld-ingress
+  annotations:
+    # Пока у нас нет домена и SSL-сертификата, отключаем принудительный HTTPS
+    ingress.kubernetes.io/ssl-redirect: "false" 
+spec:
+  rules:
+    - http:
+        paths:
+          # Все запросы к API направляем на бэкенд (порт 8000)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-svc
+                port:
+                  number: 8000
+          # Все остальные запросы направляем на фронтенд (порт 3000)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-svc
+                port:
+                  number: 3000

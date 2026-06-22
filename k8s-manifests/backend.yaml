@@ -17,16 +17,18 @@ spec:
           image: ghcr.io/ni-cookie/diploma-backend:latest
           command: ["alembic", "upgrade", "head"]
           env:
-            - name: POSTGRES_SERVER
+            - name: DB_HOST
               value: "postgres-svc"
-            - name: POSTGRES_USER
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USERNAME
               value: "postgres"
-            - name: POSTGRES_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-secrets
                   key: admin-password
-            - name: POSTGRES_DB
+            - name: DB_DATABASE
               value: "realworld_db"
       containers:
         - name: backend
@@ -35,18 +37,20 @@ spec:
           ports:
             - containerPort: 8000
           env:
-            - name: POSTGRES_SERVER
+            - name: DB_HOST
               value: "postgres-svc"
-            - name: POSTGRES_USER
-              value: "fastapi_user"
-            - name: POSTGRES_PASSWORD
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USERNAME
+              value: "fastapi_user" 
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-secrets
                   key: fastapi-password
-            - name: POSTGRES_DB
+            - name: DB_DATABASE
               value: "realworld_db"
-            - name: SECRET_KEY
+            - name: JWT_SECRET_KEY
               value: "diploma-super-secret-key-123"
 ---
 apiVersion: v1

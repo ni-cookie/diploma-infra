@@ -14,4 +14,5 @@ data:
       \c realworld_db
       GRANT ALL ON SCHEMA public TO fastapi_user;
       ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO fastapi_user;
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO fastapi_user;
     EOSQL
